@@ -12,23 +12,51 @@ public class ReplaySystem : MonoBehaviour {
 	// rigid body of the ball.
 	private Rigidbody rigidBody;
 
+	// Get the game manager
+	private GameManager manager;
+
+
+	private bool recordOn = true;
+	private bool playbackOn = false;
+
 	// Use this for initialization
 	void Start () {
 
 		rigidBody = GetComponent<Rigidbody>();
-
+		manager = GameObject.FindObjectOfType<GameManager>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 
-		Record ();
+		// Record
+		if (manager.isRecordingOn == true) {
+			Record ();
+		}
+
+		// Play Back
+		if (manager.isRecordingOn == false) {
+			PlayBack ();
+		}
 
 
 	}
 
-	void Record ()
+	/// <summary>
+	/// Stores frame game data for replay
+	/// </summary>
+	public void Record ()
 	{
+
+		// Announce new state change
+		if (recordOn == false) {
+			playbackOn = false;
+			recordOn = true;
+			Debug.Log("Playback OFF -> Recording ON");
+		}
+
+
 		// make sure physics engine is moving object during record mode
 		rigidBody.isKinematic = false;
 
@@ -37,15 +65,23 @@ public class ReplaySystem : MonoBehaviour {
 
 		// get the time
 		float time = Time.time;
-		Debug.Log ("Current Frame: " + frame);
+		Debug.Log ("Recording current Frame: " + frame);
 
 		// populate the frame data.
 		keyFrames [frame] = new MyKeyFrame (time, transform.position, transform.rotation);
 	}
 
 
-	void PlayBack ()
+	public void PlayBack ()
 	{
+
+		// Announce new state change
+		if (playbackOn == false) {
+			recordOn = false;
+			playbackOn = true;
+			Debug.Log("Recording OFF -> PlayBack ON");
+		}
+
 		// set object to be moved by script during playback
 		rigidBody.isKinematic = true;
 
@@ -56,14 +92,13 @@ public class ReplaySystem : MonoBehaviour {
 		transform.position = keyFrames[frame].position;
 		transform.rotation = keyFrames[frame].rotation;
 
+		//Debug.Log("Frame[" + frame + "]:  transform.position [" + transform.position + "] || transform.rotation [" + transform.rotation + "]);
+
 
 	}
 
 
 }
-
-
-
 
 
 
