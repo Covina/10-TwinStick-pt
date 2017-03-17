@@ -65,7 +65,7 @@ public class ReplaySystem : MonoBehaviour {
 
 		// get the time
 		float time = Time.time;
-		Debug.Log ("Recording current Frame: " + frame);
+		//Debug.Log ("Recording current Frame: " + frame);
 
 		// populate the frame data.
 		keyFrames [frame] = new MyKeyFrame (time, transform.position, transform.rotation);
